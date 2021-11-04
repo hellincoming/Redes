@@ -4,7 +4,7 @@ import time
 import random
 from threading import Thread,Semaphore
 import pathlib
-
+from typing import final
 
 class bcolors:
     HEADER = '\033[95m'
@@ -36,6 +36,8 @@ tid = -1
 error = False
 puerto = -1
 address = ('',0)
+utemp=""
+ptemp=""
 
 ####################################UDP########################################
 localIP     = "127.0.0.1"
@@ -46,7 +48,24 @@ UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 # Bind to address and ip
 UDPServerSocket.bind((localIP, localPort))
 ###############################################################################
-
+def separate(palabra):
+    lst = []
+    for pos,char in enumerate(palabra):
+        if(char == '/'):
+            lst.append(pos)
+    final=palabra[:lst[0]]
+    user=palabra[slice(lst[0]+1,lst[1])]
+    pas=palabra[lst[1]+1:]
+    return (final ,user , pas)
+def log(u,p):
+    a=[['user', 'admin', '123', 'Felipe'], ['user', 'admin', '456', 'Contrasena312@3']]
+    bo=False
+    for i in range(0, (len(a[0]))):
+        if (a[0][i]==u):
+            bo=True
+            if(a[1][i]!=p):
+                bo=False
+    return bo
 
 print(bcolors.OKGREEN + "Link Available" + bcolors.ENDC)
 
@@ -75,6 +94,12 @@ while(True):
         #print(opCode)
         if opCode == 1 :
             fileName = clientMsg[2:index].decode("utf-8")
+            fileName, user, pas = separate(fileName)
+            comp=log(user,pas)
+         #   print(comp)
+            if(comp==False):
+                opCode=5
+                error = True
             net_mode = clientMsg[index+1:len(clientMsg)-1].decode("utf-8").lower()            
             puerto = random.randint(20002, 20100) #generamos un nuevo puerto para descongestionar            
             UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -91,6 +116,12 @@ while(True):
                 error = True
         elif opCode == 2 :
             fileName = clientMsg[2:index].decode("utf-8")
+            fileName, user, pas = separate(fileName)
+            comp=log(user,pas)
+            print(comp)
+            if(comp==False):
+                opCode=5
+                error = True
             net_mode = clientMsg[index+1:len(clientMsg)-1].decode("utf-8").lower()
             print(fileName)
             #enviamos ack con block 0
@@ -126,6 +157,7 @@ while(True):
         UDPServerSocket.sendto(pkg, address) #UDPServerSocket.sendto(bytesToSend, address)
     #print(bcolors.OKGREEN + "Link Available" + bcolors.ENDC)
     break
+
 
 def sendDATA(udpcsocket, blockn, msg, sap, bfsz, pk, err): #region critica, aqui se realiza la comunicacion con el servidor
     while True:
@@ -177,7 +209,7 @@ def chunkstring(string, length):
 finalBlock = False
 ##OPERACION PARA EL WRQ
 if opCode == 2:
-    #GENERAMOS LA KEY PARA DESCIFRAR LOS DATA PKG
+
     
     #A LA ESCUCHA DE LOS PAQUETES DE DATA
     UDPServerSocket.settimeout(3)#tiempo de gracia (3 segundos) para terminar conexion, en caso de que el ack final se haya perdido
@@ -278,5 +310,4 @@ elif opCode == 1:
     print(bcolors.OKGREEN + "Archivo solicitado enviado por Server - Fin de Conexion!" + bcolors.ENDC)
 ###OPERACION EN CASO DE ERROR
 elif opCode == 5:
-    print(bcolors.FAIL + "Server " + str(id) + " recibio ERROR, ERROR SERVIDOR: " + clientMsg + "FIN DE CONEXION" + bcolors.ENDC) 
-
+    print(bcolors.FAIL + "Server " + str(id) + " recibio ERROR, ERROR SERVIDOR: " + "FIN DE CONEXION" + bcolors.ENDC) 

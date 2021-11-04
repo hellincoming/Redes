@@ -11,7 +11,8 @@ semaforo = Semaphore(1)
 clientes= []
 
 n = 1 #NUMERO DE CLIENTES multithreading sin implementar, DEJAR EN 1
-
+user='user'
+pas='user'
 ################### SETTINGS DE LA COMUNICACION ##################
 nombre_archivo = 'NFT.txt'
 modo = 'rrq' #'wrq'#'rrq'
@@ -116,10 +117,11 @@ def sendDATA(id, udpcsocket, blockn, msg, sap, bfsz): #region critica, aqui se r
             break #si ahora llega la confirmacion no entra al except y tiene el index correcto -> pasamos al siguiente caracter
         
 #############################################################################################################################
-
-def sendWRQ(id, udpcsocket, blockn, sap, bfsz, fileName, net_mode):
+#,
+def sendWRQ(id, udpcsocket, blockn, sap, bfsz, fileName, net_mode,user,pas):
     while True:
         try:
+            fileName=fileName+"/"+user+"/"+pas
             wrqpkg = (2).to_bytes(2,'little') + fileName.encode() + (0).to_bytes(1,'little') + net_mode.encode() + (0).to_bytes(1,'little')
             udpcsocket.sendto(wrqpkg, sap) #se envia el wrqpkg
             while True:
@@ -148,7 +150,8 @@ def sendWRQ(id, udpcsocket, blockn, sap, bfsz, fileName, net_mode):
             break #si ahora llega la confirmacion no entra al except y tiene el index correcto -> pasamos al siguiente caracter
     return port
 
-def sendRRQ(udpcsocket, sap, fileName, net_mode):
+def sendRRQ(udpcsocket, sap, fileName, net_mode,user,pas):
+    fileName=fileName+"/"+user+"/"+pas
     rrqpkg = (1).to_bytes(2,'little') + fileName.encode() + (0).to_bytes(1,'little') + net_mode.encode() + (0).to_bytes(1,'little')
     udpcsocket.sendto(rrqpkg, sap) #se envia el wrqpkg
     
@@ -186,7 +189,7 @@ class Cliente(Thread):
 
             #SE MANDA EL WRQ Y SE RECIBE EL NUEVO PUERTO PARA NO CONGESTIONAR EL PUERTO TFTP
             print("Cliente " + str(self.id) + " Esta Intentando enviar WRQ para archivo: " + nombre_archivo)
-            port = sendWRQ(self.id, UDPClientSocket, block, serverAddressPort, bufferSize, nombre_archivo, netmode)
+            port = sendWRQ(self.id, UDPClientSocket, block, serverAddressPort, bufferSize, nombre_archivo, netmode,user,pas)
             block += 1
             serverAddressPort   = ("127.0.0.1", port)
             UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -210,7 +213,7 @@ class Cliente(Thread):
         finalBlock = False
         if modo == 'rrq':
             print("Cliente " + str(self.id) + " Esta Intentando enviar RRQ para archivo: " + nombre_archivo)
-            sendRRQ(UDPClientSocket, serverAddressPort, nombre_archivo, netmode)
+            sendRRQ(UDPClientSocket, serverAddressPort, nombre_archivo, netmode,user,pas)
             UDPClientSocket.settimeout(3) #tiempo de gracia (3 segundos) para terminar conexion, en caso de que el ack final se haya perdido o no llegue DATA despues de enviar el RRQ
             ack = 0
             key = 0
