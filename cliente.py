@@ -13,7 +13,7 @@ clientes= []
 n = 1 #NUMERO DE CLIENTES multithreading sin implementar, DEJAR EN 1
 
 ################### SETTINGS DE LA COMUNICACION ##################
-nombre_archivo = 'napoleon.txt'
+nombre_archivo = 'NFT.txt'
 modo = 'rrq' #'wrq'#'rrq'
 netmode = "netascii"
 ##################################################################
