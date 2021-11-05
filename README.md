@@ -12,5 +12,5 @@ Se plantea una mejora a RFC 1350 con la implementacion de un login dentro del se
 ```
   Cliente
 ```
-  cliente.py  <usuario> <contraseña> <nombreArchivo.txt> <operacion>
+  cliente.py  <usuario> <contraseña> <nombreArchivo.txt> <operacion(wrq o rrq)>
 ```
