@@ -316,4 +316,4 @@ elif opCode == 1:
     print(bcolors.OKGREEN + "Archivo solicitado enviado por Server - Fin de Conexion!" + bcolors.ENDC)
 ###OPERACION EN CASO DE ERROR
 elif opCode == 5:
-    print(bcolors.FAIL + "Server " + str(id) + " recibio ERROR, ERROR SERVIDOR: " + "FIN DE CONEXION" + bcolors.ENDC) 
+    print(bcolors.FAIL + "Server recibio ERROR FIN DE CONEXION" + bcolors.ENDC) 

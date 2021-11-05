@@ -5,17 +5,18 @@ import time
 from threading import Thread,Semaphore
 import os
 import pathlib
+import sys
 
 
 semaforo = Semaphore(1)
 clientes= []
 
 n = 1 #NUMERO DE CLIENTES multithreading sin implementar, DEJAR EN 1
-user='user'
-pas='user'
+user=sys.argv[1]
+pas=sys.argv[2]
 ################### SETTINGS DE LA COMUNICACION ##################
-nombre_archivo = 'NFT.txt'
-modo = 'rrq' #'wrq'#'rrq'
+nombre_archivo = sys.argv[3]
+modo = sys.argv[4]  #'wrq'#'rrq'
 netmode = "netascii"
 ##################################################################
 
@@ -41,9 +42,7 @@ class bcolors:
 # 5 ERROR
 '''
                    TFTP Formats
-
    Type   Op #     Format without header
-
           2 bytes    string   1 byte     string   1 byte
           -----------------------------------------------
    RRQ/  | 01/02 |  Filename  |   0  |    Mode    |   0  |
@@ -60,9 +59,7 @@ class bcolors:
           ----------------------------------------
    ERROR | 05    |  ErrorCode |   ErrMsg   |   0  |
           ----------------------------------------
-
 Data dentro del paquete DATA tiene un maximo de 512 Bytes
-
 '''
 
 #############################################################################################################################
