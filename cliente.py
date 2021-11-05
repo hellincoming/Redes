@@ -103,7 +103,7 @@ def sendDATA(id, udpcsocket, blockn, msg, sap, bfsz): #region critica, aqui se r
                 elif code == 5:
                     errorcode = str(int.from_bytes(recvpkt[2:4], 'little'))
                     errormsg = recvpkt[4:len(recvpkt)-1].decode("utf-8")
-                    print(bcolors.FAIL + "Cliente " + str(id) + " recibio ERROR, ERROR SERVIDOR: CODE=" + errorcode + " " + errormsg + " FIN DE CONEXION" + bcolors.ENDC)
+                    print(bcolors.FAIL + "Cliente " + str(id) + " recibio ERROR, CODE=" + errorcode  + errormsg + " FIN DE CONEXION" + bcolors.ENDC)
                     break
                 print(bcolors.FAIL + "Cliente " + str(id) + " recibio ACK Incorrecto" + bcolors.ENDC)
         except socket.timeout:
@@ -136,7 +136,7 @@ def sendWRQ(id, udpcsocket, blockn, sap, bfsz, fileName, net_mode,user,pas):
                 elif code == 5: #SI LLEGA UN ERROR SE TERMINA LA CONEXION
                     errorcode = str(int.from_bytes(recvpkt[2:4], 'little'))
                     errormsg = recvpkt[4:len(recvpkt)-1].decode("utf-8")
-                    print(bcolors.FAIL + "Cliente " + str(id) + " recibio ERROR, ERROR SERVIDOR: CODE=" + errorcode + " " + errormsg + " FIN DE CONEXION" + bcolors.ENDC)
+                    print(bcolors.FAIL + "Cliente " + str(id) + "  ERROR SERVIDOR: CODE= " + errorcode  +' '+ errormsg + " FIN DE CONEXION" + bcolors.ENDC)
                     exit()
                 print(bcolors.FAIL + "Cliente " + str(id) + " recibio ACK del WRQ Incorrecto" + bcolors.ENDC)
         except socket.timeout:

@@ -48,6 +48,8 @@ UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 # Bind to address and ip
 UDPServerSocket.bind((localIP, localPort))
 ###############################################################################
+
+#############################Separa el String en nombre archivo usuario contraseña#################################
 def separate(palabra):
     lst = []
     for pos,char in enumerate(palabra):
@@ -57,8 +59,9 @@ def separate(palabra):
     user=palabra[slice(lst[0]+1,lst[1])]
     pas=palabra[lst[1]+1:]
     return (final ,user , pas)
+######################################Recorre lista de usuarios y luego lo compara con la contraseña ###########################
 def log(u,p):
-    a=[['user', 'admin', '123', 'Felipe'], ['user', 'admin', '456', 'Contrasena312@3']]
+    a=[['user', '192.0.0.1','admin', '123', 'Felipe'], ['user', '192.0.0.1','admin', '456', 'Contrasena312@3']]
     bo=False
     for i in range(0, (len(a[0]))):
         if (a[0][i]==u):
