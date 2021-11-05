@@ -100,6 +100,9 @@ while(True):
             if(comp==False):
                 opCode=5
                 error = True
+                msgError = "Login Fallido"
+                pkg = (5).to_bytes(2, 'little') + (6).to_bytes(2, 'little') + msgError.encode() + (0).to_bytes(1, 'little') #Error Login
+                UDPServerSocket.sendto(pkg, address) 
             net_mode = clientMsg[index+1:len(clientMsg)-1].decode("utf-8").lower()            
             puerto = random.randint(20002, 20100) #generamos un nuevo puerto para descongestionar            
             UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -113,17 +116,21 @@ while(True):
                 msgError = "ARCHIVO NO EXISTE"
                 print(bcolors.FAIL + "Server " + str(id) + " recibio ERROR, ERROR SERVIDOR: CODE=1 " + msgError + " FIN DE CONEXION" + bcolors.ENDC) 
                 pkg = (5).to_bytes(2, 'little') + (6).to_bytes(2, 'little') + msgError.encode() + (0).to_bytes(1, 'little') #ERROR PKG
+                UDPServerSocket.sendto(pkg, address) 
                 error = True
         elif opCode == 2 :
             fileName = clientMsg[2:index].decode("utf-8")
             fileName, user, pas = separate(fileName)
             comp=log(user,pas)
-            print(comp)
+            #print(comp)
             if(comp==False):
                 opCode=5
                 error = True
+                msgError = "Login Fallido"
+                pkg = (5).to_bytes(2, 'little') + (6).to_bytes(2, 'little') + msgError.encode() + (0).to_bytes(1, 'little') #ERROR Login
+                UDPServerSocket.sendto(pkg, address) 
             net_mode = clientMsg[index+1:len(clientMsg)-1].decode("utf-8").lower()
-            print(fileName)
+            #print(fileName)
             #enviamos ack con block 0
                 # cambiamos el puerto para descongestionar el puerto 69 
             puerto = random.randint(20002, 20100) #generamos un nuevo puerto para descongestionar            
@@ -133,7 +140,7 @@ while(True):
                 f = open("enviado/" + fileName,'x') 
                 f.close()
                 pkg = (4).to_bytes(2, 'little') + (0).to_bytes(2, 'little')
-                print(pkg)
+                #print(pkg)
             except FileExistsError : #FileNotFoundError
                 #CODIGO ERROR TFTP 6
                 msgError = "ARCHIVO YA EXISTE"
@@ -153,7 +160,8 @@ while(True):
             pkg = (5).to_bytes(2, 'little') + (4).to_bytes(2, 'little') + msgError.encode() + (0).to_bytes(1, 'little') #ERROR PKG
         buffer[tid] = clientMsg    #guardamos el paquete de ese cliente en el diccionario del buffer
         time.sleep(0.2)
-        # Se envia el ack correspondiente desde el nuevo puerto o un mensaje de error desde el puerto 69
+        # Se envia el ack correspond
+#######################iente desde el nuevo puerto o un mensaje de error desde el puerto 69
         UDPServerSocket.sendto(pkg, address) #UDPServerSocket.sendto(bytesToSend, address)
     #print(bcolors.OKGREEN + "Link Available" + bcolors.ENDC)
     break
@@ -209,8 +217,6 @@ def chunkstring(string, length):
 finalBlock = False
 ##OPERACION PARA EL WRQ
 if opCode == 2:
-
-    
     #A LA ESCUCHA DE LOS PAQUETES DE DATA
     UDPServerSocket.settimeout(3)#tiempo de gracia (3 segundos) para terminar conexion, en caso de que el ack final se haya perdido
     print(bcolors.OKGREEN + "Link Available" + bcolors.ENDC)

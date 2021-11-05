@@ -223,6 +223,7 @@ class Cliente(Thread):
                     #########################################
                     bytesAddressPair = UDPClientSocket.recvfrom(bufferSize)
                     serverMsg = bytesAddressPair[0]
+                    #print(serverMsg)
                     address = bytesAddressPair[1]
                     #########################################
                     print(bcolors.WARNING + "Link bussy" + bcolors.ENDC)
@@ -238,6 +239,7 @@ class Cliente(Thread):
                     #print(clientMsg)  
                     ################################
                     opCode = int.from_bytes(serverMsg[0:2], 'little')
+                    #print(opCode)
                     if opCode == 1:
                         #error 4, operacion tftp invalida
                         msgError = "Se esperaba un DATA pkg (se recibio un RRQ)"
@@ -271,7 +273,9 @@ class Cliente(Thread):
                     elif opCode == 5:
                         #error 4, operacion tftp invalida
                         msgError = "Cliente " + str(id) + " recibio ERROR de Servidor"
-                        pkg = (5).to_bytes(2, 'little') + (4).to_bytes(2, 'little') + msgError.encode() + (0).to_bytes(1, 'little') #ERROR PKG
+                        a=serverMsg[2:len(serverMsg)-1].decode("utf-8")
+                        #print(a)
+                        print(bcolors.FAIL + "Cliente " + " recibio ERROR CODE=" + str(int.from_bytes(serverMsg[2:3], 'little')) +' '+ a + " FIN DE CONEXION" + bcolors.ENDC)
                         break
                     time.sleep(0.2)
                     # Se envia el ack correspondiente
